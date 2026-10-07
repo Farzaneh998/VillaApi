@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Rent.Data;
 using Rent.Models;
 using Rent.Models.Dto;
@@ -14,25 +15,25 @@ namespace Rent.Controllers
         private readonly ApplicationDbContext _db;
         public VillaController(ApplicationDbContext db)
         {
-                _db = db;   
+            _db = db;
         }
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<VillaDTO>> GetVillas()
+        public async Task<ActionResult<IEnumerable<VillaDTO>>> GetVillas()
         {
-            return Ok(_db.Villas.ToList());
+            return Ok(await _db.Villas.ToListAsync());
         }
 
 
         [HttpGet("{id}", Name = "GetVilla")]
-        public ActionResult<VillaDTO> GetVilla(int id)
+        public async Task<ActionResult<VillaDTO>> GetVilla(int id)
         {
             if (id == 0)
             {
                 return BadRequest();
             }
-            var villa = _db.Villas.FirstOrDefault(u => id == id);
+            var villa = await _db.Villas.FirstOrDefaultAsync(u=>u.Id == id);
             if (villa == null)
                 return NotFound();
             else
@@ -41,7 +42,7 @@ namespace Rent.Controllers
         }
 
         [HttpPost]
-        public ActionResult<VillaDTO> CreateVilla([FromBody] VillaDTO villaDto)
+        public async Task<ActionResult<VillaDTO>> CreateVilla([FromBody] VillaCreateDTO villaDto)
         {
             if (!ModelState.IsValid)
             {
@@ -51,16 +52,14 @@ namespace Rent.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            if (_db.Villas.FirstOrDefault(u => u.Name.ToLower() == villaDto.Name.ToLower()) != null)
+            if (await _db.Villas.FirstOrDefaultAsync(u => u.Name.ToLower() == villaDto.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("error", "existed!");
                 return BadRequest(ModelState);
             }
 
-            villaDto.Id = _db.Villas.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
             Villa model = new Villa()
             {
-                Id = villaDto.Id,
                 Name = villaDto.Name,
                 Details = villaDto.Details,
                 Occupancy = villaDto.Occupancy,
@@ -70,31 +69,32 @@ namespace Rent.Controllers
                 Sqft = villaDto.Sqft,
             };
 
-            _db.Villas.Add(model);
-            _db.SaveChanges();
-;            return CreatedAtRoute("getVilla", new { id = villaDto.Id }, villaDto);
+            await _db.Villas.AddAsync(model);
+            await _db.SaveChangesAsync();
+             return CreatedAtRoute("getVilla", new { id = model.Id }, model);
         }
 
 
         [HttpDelete("{id}", Name = "DeleteVilla")]
-        public IActionResult DeleteVilla(int id)
+        public async Task<IActionResult> DeleteVilla(int id)
         {
             if (id == 0)
             {
                 return BadRequest();
             }
-            if (!_db.Villas.Any(u => u.Id == id))
+            if (  !_db.Villas.Any(u => u.Id == id))
             {
                 return NotFound();
             }
-            var villa = _db.Villas.FirstOrDefault(u => u.Id == id);
+            var villa =await _db.Villas.FirstOrDefaultAsync(u => u.Id == id);
             _db.Villas.Remove(villa);
+            await _db.SaveChangesAsync();
             return NoContent();
         }
 
 
-        [HttpPut("{id}",Name ="UpdateVilla")]
-        public IActionResult UpdateVilla(int id, [FromBody] VillaDTO villaDto)
+        [HttpPut("{id}", Name = "UpdateVilla")]
+        public async Task<IActionResult> UpdateVilla(int id, [FromBody] VillaUpdateDTO villaDto)
         {
             if (villaDto == null)
             {
@@ -113,20 +113,20 @@ namespace Rent.Controllers
                 Sqft = villaDto.Sqft,
             };
             _db.Villas.Update(villa);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return NoContent();
         }
 
         //update one filed
-        [HttpPatch("{id}",Name ="Updatepartavilla")]
-        public IActionResult UpdatePartaVilla(int id,JsonPatchDocument<VillaDTO> patchvillaDto)
+        [HttpPatch("{id}", Name = "Updatepartavilla")]
+        public async Task<IActionResult> UpdatePartaVilla(int id, JsonPatchDocument<VillaUpdateDTO> patchvillaDto)
         {
             if (patchvillaDto == null)
             {
                 return BadRequest();
             }
-            var villa = _db.Villas.FirstOrDefault(u => u.Id == id);
-            VillaDTO villaDto = new()
+            var villa =await _db.Villas.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+            VillaUpdateDTO villaDto = new()
             {
                 Id = villa.Id,
                 Name = villa.Name,
@@ -151,7 +151,7 @@ namespace Rent.Controllers
                 Sqft = villaDto.Sqft,
             };
             _db.Villas.Update(model);
-            _db.SaveChanges();
+           await  _db.SaveChangesAsync();
             return NoContent();
         }
     }
