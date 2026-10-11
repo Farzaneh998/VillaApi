@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Rent;
 using Rent.Data;
+using Rent.Reposotory;
+using Rent.Reposotory.IReposotory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(Option => Option.UseSqlServe
 builder.Services.AddControllers().AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();//xml+ json format *httppatch
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
-
+builder.Services.AddScoped<IVillaRepository,VillaRepository>();
 
 
 
