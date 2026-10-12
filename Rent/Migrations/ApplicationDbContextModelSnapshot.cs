@@ -67,7 +67,7 @@ namespace Rent.Migrations
                         {
                             Id = 1,
                             Amenity = "tets",
-                            CreateDate = new DateTime(2026, 10, 6, 16, 28, 23, 431, DateTimeKind.Local).AddTicks(1631),
+                            CreateDate = new DateTime(2026, 10, 12, 15, 50, 24, 55, DateTimeKind.Local).AddTicks(4228),
                             Details = "best villa",
                             ImageUrl = "https://www.golbazar.com/%D8%B3%D9%81%D8%A7%D8%B1%D8%B4-%DA%AF%D9%84-%D9%88-%D9%87%D8%AF%DB%8C%D9%87-%D8%A8%D9%87-%D8%B3%D8%B1%D8%A7%D8%B3%D8%B1-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86",
                             Name = "villa1",
@@ -79,7 +79,7 @@ namespace Rent.Migrations
                         {
                             Id = 2,
                             Amenity = "tets2",
-                            CreateDate = new DateTime(2026, 10, 6, 16, 28, 23, 431, DateTimeKind.Local).AddTicks(1645),
+                            CreateDate = new DateTime(2026, 10, 12, 15, 50, 24, 55, DateTimeKind.Local).AddTicks(4244),
                             Details = "best villa",
                             ImageUrl = "https://www.golbazar.com/%D8%B3%D9%81%D8%A7%D8%B1%D8%B4-%DA%AF%D9%84-%D9%88-%D9%87%D8%AF%DB%8C%D9%87-%D8%A8%D9%87-%D8%B3%D8%B1%D8%A7%D8%B3%D8%B1-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86",
                             Name = "villa2",
@@ -91,7 +91,7 @@ namespace Rent.Migrations
                         {
                             Id = 3,
                             Amenity = "hjf",
-                            CreateDate = new DateTime(2026, 10, 6, 16, 28, 23, 431, DateTimeKind.Local).AddTicks(1647),
+                            CreateDate = new DateTime(2026, 10, 12, 15, 50, 24, 55, DateTimeKind.Local).AddTicks(4246),
                             Details = "best villa5",
                             ImageUrl = "https://www.golbazar.com/%D8%B3%D9%81%D8%A7%D8%B1%D8%B4-%DA%AF%D9%84-%D9%88-%D9%87%D8%AF%DB%8C%D9%87-%D8%A8%D9%87-%D8%B3%D8%B1%D8%A7%D8%B3%D8%B1-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86",
                             Name = "villa3",
@@ -99,6 +99,42 @@ namespace Rent.Migrations
                             Rate = 1000.0,
                             Sqft = 20
                         });
+                });
+
+            modelBuilder.Entity("Rent.Models.VillaNumber", b =>
+                {
+                    b.Property<int>("VillaNo")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SpetioalDetails")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VillaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("VillaNo");
+
+                    b.HasIndex("VillaId");
+
+                    b.ToTable("VillaNumbers");
+                });
+
+            modelBuilder.Entity("Rent.Models.VillaNumber", b =>
+                {
+                    b.HasOne("Rent.Models.Villa", "Villa")
+                        .WithMany()
+                        .HasForeignKey("VillaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Villa");
                 });
 #pragma warning restore 612, 618
         }

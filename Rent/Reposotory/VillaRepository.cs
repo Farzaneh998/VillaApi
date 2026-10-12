@@ -4,15 +4,15 @@ using Rent.Reposotory.IReposotory;
 
 namespace Rent.Reposotory
 {
-    public class VillaRepository :Repository<Villa> ,IVillaRepository
+    public class VillaNumberRepository :Repository<VillaNumber> ,IVillaNumberRepository
     {
         private readonly ApplicationDbContext _db;
-        public VillaRepository(ApplicationDbContext db):base(db)
+        public VillaNumberRepository(ApplicationDbContext db):base(db)
         {
             _db = db;
         }
 
-        public async Task<Villa> UpdateAsync(Villa entity)
+        public async Task<VillaNumber> UpdateAsync(VillaNumber entity)
         {
             _db.Update(entity);
             await _db.SaveChangesAsync();

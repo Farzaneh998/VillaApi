@@ -14,9 +14,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(Option => Option.UseSqlServe
 builder.Services.AddControllers().AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();//xml+ json format *httppatch
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+#region(Repository)
 builder.Services.AddScoped<IVillaRepository,VillaRepository>();
+builder.Services.AddScoped<IVillaNumberRepository,VillaNumberRepository>();
 
-
+#endregion
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
