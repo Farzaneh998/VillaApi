@@ -1,0 +1,53 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<VillaWebApp.Models.Dto.VillaDTO>
+
+@{
+    ViewData["Title"] = "لیست ویلاها";
+}
+
+<h2>لیست ویلاها</h2>
+
+<table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: center;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th>شناسه (Id)</th>
+            <th>نام (Name)</th>
+            <th>متراژ (Sqft)</th>
+            <th>ظرفیت (Occupancy)</th>
+            <th>جزئیات (Details)</th>
+            <th>امکانات (Amenity)</th>
+            <th>قیمت (Rate)</th>
+            <th>تصویر (Image)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.Sqft</td>
+                    <td>@item.Occupancy</td>
+                    <td>@item.Details</td>
+                    <td>@item.Amenity</td>
+                    <td>@item.Rate</td>
+                    <td>
+                        <img src="@item.ImageUrl" alt="Villa Image" style="width: 100px; height: auto;" />
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">هیچ ویلا‌ای یافت نشد!</td>
+            </tr>
+        }
+    </tbody>
+</table>
